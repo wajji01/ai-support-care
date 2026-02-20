@@ -1,5 +1,4 @@
 import { scalekit } from "@/lib/ScaleKit";
-import { m } from "motion/react";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(rep:NextRequest) {
