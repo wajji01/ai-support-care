@@ -3,7 +3,7 @@
 import axios from "axios";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function DashboardClient({ ownerId }: { ownerId: string }) {
   const navigate = useRouter();
@@ -11,6 +11,7 @@ function DashboardClient({ ownerId }: { ownerId: string }) {
   const [supportEmail, setSupportEmail] = useState("");
   const [knowledge, setKnowledge] = useState("");
   const [loading, setLoading] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const handleSetting = async () => {
     try {
@@ -21,13 +22,34 @@ function DashboardClient({ ownerId }: { ownerId: string }) {
         supportEmail,
         knowledge,
       });
+      console.log(result.data);
       setLoading(false);
-      console.log(result);
+      setSaved(true);
+      setTimeout(() => {
+        setSaved(false);
+      }, 3000);
     } catch (error) {
       console.log(error);
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (ownerId) {
+      const handleGetDetails = async () => {
+        try {
+          const result = await axios.post("/api/settings/get", { ownerId });
+          setBusinessName(result.data.setting.businessName);
+          setSupportEmail(result.data.setting.supportEmail);
+          setKnowledge(result.data.setting.knowledge);
+        } catch (error) {
+          console.log(error);
+          setLoading(false);
+        }
+      };
+      handleGetDetails();
+    }
+  }, [ownerId]);
 
   return (
     <div className=" min-h-full bg-zinc-50 text-zinc-900">
@@ -44,7 +66,10 @@ function DashboardClient({ ownerId }: { ownerId: string }) {
           >
             Support <span className=" text-zinc-400"> AI</span>
           </div>
-          <button className=" px-4 py-2 rounded-lg border border-zinc-300 text-sm hover:bg-zinc-100 transition">
+          <button
+            className=" px-4 py-2 rounded-lg border border-zinc-300 text-sm hover:bg-zinc-100 transition"
+            onClick={() => navigate.push("/embed")}
+          >
             Embed ChatBot
           </button>
         </div>
@@ -104,6 +129,15 @@ Support hours `}
             >
               {loading ? "Saving..." : "Save"}
             </motion.button>
+            {saved && (
+              <motion.span
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className=" text-sm font-medium text-emerald-600"
+              >
+                ✔ Setting Saved.
+              </motion.span>
+            )}
           </div>
         </motion.div>
       </div>

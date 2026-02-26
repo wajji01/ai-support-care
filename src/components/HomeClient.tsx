@@ -5,9 +5,12 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 function HomeClient({ email }: { email: string }) {
+  const [loading, setLoading] = useState(false);
   const HandleLogin = () => {
+    setLoading(true);
     window.location.href = "/api/auth/login";
   };
+
   const HandleLogout = async () => {
     try {
       const result = await axios.get("/api/auth/logout");
@@ -99,8 +102,9 @@ function HomeClient({ email }: { email: string }) {
             <button
               className="px-5 py-2 rounded-full bg-black text-white text-sm font-medium hover:bg-zinc-800 transition disabled:opacity-60 flex items-center gap-2"
               onClick={HandleLogin}
+              disabled={loading}
             >
-              Login
+              {loading ? "Loading..." : "Login"}
             </button>
           )}
         </div>

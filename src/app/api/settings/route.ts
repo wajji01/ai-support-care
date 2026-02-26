@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { ownerId, bussinessName, supportEmail, knowledge } =
-      await req.json();
+    const { ownerId, businessName, supportEmail, knowledge } = await req.json();
+
     if (!ownerId) {
       return NextResponse.json(
         { message: "OwnerId is required" },
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     await connectDb;
     const settings = await Settings.findOneAndUpdate(
       { ownerId },
-      { ownerId, bussinessName, supportEmail, knowledge },
+      { ownerId, businessName, supportEmail, knowledge },
       { new: true, upsert: true },
     );
     return NextResponse.json({ settings });
